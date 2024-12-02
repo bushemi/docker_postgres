@@ -1,0 +1,30 @@
+
+
+services:
+  postgres-db:
+    container_name: postgres-db
+    env_file:
+      - .env
+    build:
+      context: .
+      dockerfile: ./postgres/Dockerfile
+    hostname: postgres-db
+    ports:
+      - "5432:5432"
+    networks:
+      docker-network:
+        ipv4_address: ${POSTGRES_STATIC_IP}
+    restart: always
+    volumes:
+      - ${PROJECT_ROOT_DIRECTORY}/postgres/postgres_data:/var/lib/postgresql/data
+      - /var/run/docker.sock:/var/run/docker.sock
+
+
+networks:
+  docker-network:
+    name: docker-network
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.21.0.0/24
+          gateway: 172.21.0.1
